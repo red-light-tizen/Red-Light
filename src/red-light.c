@@ -2,9 +2,12 @@
 #include <service_app.h>
 #include "red-light.h"
 
+extern bt_error_e ret;
+
 bool service_app_create(void *data)
 {
     // Todo: add your code here.
+	init_bluetooth();
     return true;
 }
 
