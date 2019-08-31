@@ -8,6 +8,6 @@
 #ifndef BLUETOOTH_COMMON_H_
 #define BLUETOOTH_COMMON_H_
 
-
+#include <bluetooth.h>
 
 #endif /* BLUETOOTH_COMMON_H_ */
