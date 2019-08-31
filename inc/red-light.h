@@ -2,6 +2,7 @@
 #define __red-light_H__
 
 #include <dlog.h>
+#include "bluetooth-common.h"
 
 #ifdef  LOG_TAG
 #undef  LOG_TAG
