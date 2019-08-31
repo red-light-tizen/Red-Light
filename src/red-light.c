@@ -14,6 +14,7 @@ bool service_app_create(void *data)
 		bt_adapter_get_name(&local_name);
 		_I(local_name);
 		free(local_name);
+		get_bluetooth_adapter_visibility(1);
 	}
     return true;
 }

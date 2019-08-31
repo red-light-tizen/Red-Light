@@ -14,5 +14,6 @@
 
 void init_bluetooth();
 bool get_bluetooth_adapter_state();
+bool get_bluetooth_adapter_visibility(int);
 
 #endif /* BLUETOOTH_COMMON_H_ */
