@@ -8,7 +8,13 @@ bool service_app_create(void *data)
 {
     // Todo: add your code here.
 	init_bluetooth();
-	get_bluetooth_adapter_state();
+	if (get_bluetooth_adapter_state()) {
+		char **local_name;
+		bt_adapter_set_name("Red Light");
+		bt_adapter_get_name(&local_name);
+		_I(local_name);
+		free(local_name);
+	}
     return true;
 }
 
