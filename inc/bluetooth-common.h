@@ -10,7 +10,9 @@
 
 #include <dlog.h>
 #include <bluetooth.h>
+#include "red-light.h"
 
 void init_bluetooth();
+bool get_bluetooth_adapter_state();
 
 #endif /* BLUETOOTH_COMMON_H_ */

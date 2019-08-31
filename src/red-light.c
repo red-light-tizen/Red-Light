@@ -8,6 +8,7 @@ bool service_app_create(void *data)
 {
     // Todo: add your code here.
 	init_bluetooth();
+	get_bluetooth_adapter_state();
     return true;
 }
 
