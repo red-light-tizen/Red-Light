@@ -37,6 +37,36 @@ bool get_bluetooth_adapter_state() {
 	return !(adapter_state == BT_ADAPTER_DISABLED);
 }
 
+void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data) {
+    if (result != BT_ERROR_NONE) {
+        dlog_print(DLOG_ERROR, LOG_TAG, "[adapter_state_changed_cb] failed! result=%d", result);
+
+        return;
+    }
+    if (adapter_state == BT_ADAPTER_ENABLED) {
+        dlog_print(DLOG_INFO, LOG_TAG, "[adapter_state_changed_cb] Bluetooth is enabled!");
+
+        /* Get information about Bluetooth adapter */
+/*        char *local_address = NULL;
+        bt_adapter_get_address(&local_address);
+        dlog_print(DLOG_INFO, LOG_TAG, "[adapter_state_changed_cb] Adapter address: %s.", local_address);
+        if (local_address)
+            free(local_address);
+        char *local_name;
+        bt_adapter_get_name(&local_name);
+        dlog_print(DLOG_INFO, LOG_TAG, "[adapter_state_changed_cb] Adapter name: %s.", local_name);
+        if (local_name)
+            free(local_name);*/
+    } else {
+        dlog_print(DLOG_INFO, LOG_TAG, "[adapter_state_changed_cb] Bluetooth is disabled!");
+        /*
+           When you try to get device information
+           by invoking bt_adapter_get_name(), bt_adapter_get_address(),
+           or bt_adapter_get_visibility(), BT_ERROR_NOT_ENABLED occurs
+        */
+    }
+}
+
 bool get_bluetooth_adapter_visibility(int duration) {
 	/*
 	   Duration until the visibility mode is changed

@@ -28,6 +28,9 @@ void service_app_terminate(void *data)
 void service_app_control(app_control_h app_control, void *data)
 {
     // Todo: add your code here.
+	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
     return;
 }
 
