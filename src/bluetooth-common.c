@@ -16,6 +16,17 @@ void init_bluetooth() {
 
 		return;
 	}
+
+	char *local_name, *local_address;
+	bt_adapter_set_name("Red Light");
+	bt_adapter_get_name(&local_name);
+	_I("Bluetooth adapter name: %s", local_name);
+	if (local_name)
+		free(local_name);
+	bt_adapter_get_address(&local_address);
+	_I("Bluetooth adapter address: %s", local_address);
+	if (local_address)
+		free(local_address);
 }
 
 void deinit_bluetooth() {
@@ -36,11 +47,13 @@ bool get_bluetooth_adapter_state() {
 		return false;
 	}
 	/* If the Bluetooth adapter is not enabled */
-	if (adapter_state == BT_ADAPTER_DISABLED)
+	if (adapter_state == BT_ADAPTER_DISABLED) {
 		dlog_print(DLOG_ERROR, LOG_TAG,	"Bluetooth adapter is not enabled. You should enable Bluetooth!!");
-	else
+		return false;
+	} else {
 		_I("Bluetooth adapter is enabled.");
-	return !(adapter_state == BT_ADAPTER_DISABLED);
+		return true;
+	}
 }
 
 void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data) {
@@ -82,13 +95,14 @@ bool get_bluetooth_adapter_visibility(int duration) {
 	*/
 //	int duration = 1;
 	bt_adapter_get_visibility(&mode, &duration);
-	if (mode == BT_ADAPTER_VISIBILITY_MODE_NON_DISCOVERABLE)
+	if (mode == BT_ADAPTER_VISIBILITY_MODE_NON_DISCOVERABLE) {
 	    dlog_print(DLOG_INFO, LOG_TAG, "The device is not discoverable.");
-	else if (mode == BT_ADAPTER_VISIBILITY_MODE_GENERAL_DISCOVERABLE)
+	    return false;
+	} else if (mode == BT_ADAPTER_VISIBILITY_MODE_GENERAL_DISCOVERABLE)
 	    dlog_print(DLOG_INFO, LOG_TAG, "The device is discoverable. No time limit.");
 	else
 	    dlog_print(DLOG_INFO, LOG_TAG, "The device is discoverable for a set period of time.");
-	return !(mode == BT_ADAPTER_VISIBILITY_MODE_NON_DISCOVERABLE);
+	return true;
 }
 
 void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data) {

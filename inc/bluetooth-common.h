@@ -8,7 +8,6 @@
 #ifndef BLUETOOTH_COMMON_H_
 #define BLUETOOTH_COMMON_H_
 
-#include <dlog.h>
 #include <bluetooth.h>
 #include "red-light.h"
 

@@ -9,18 +9,17 @@ bool service_app_create(void *data)
     // Todo: add your code here.
 	init_bluetooth();
 	if (get_bluetooth_adapter_state()) {
-		char *local_name, *local_address;
-		bt_adapter_set_name("Red Light");
-		bt_adapter_get_name(&local_name);
-		_I("Bluetooth adapter name: %s", local_name);
-		if (local_name)
-			free(local_name);
-		bt_adapter_get_address(&local_address);
-		_I("Bluetooth adapter address: %s", local_address);
-		if (local_address)
-			free(local_address);
 		get_bluetooth_adapter_visibility(1);
-	}
+
+		ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
+		if (ret != BT_ERROR_NONE)
+			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
+
+		ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
+		if (ret != BT_ERROR_NONE)
+			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
+	} else
+		return false;
     return true;
 }
 
@@ -37,13 +36,6 @@ void service_app_terminate(void *data)
 void service_app_control(app_control_h app_control, void *data)
 {
     // Todo: add your code here.
-	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
-	if (ret != BT_ERROR_NONE)
-	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
-
-	ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
-	if (ret != BT_ERROR_NONE)
-	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
     return;
 }
 
