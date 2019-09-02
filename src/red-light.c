@@ -9,11 +9,16 @@ bool service_app_create(void *data)
     // Todo: add your code here.
 	init_bluetooth();
 	if (get_bluetooth_adapter_state()) {
-		char **local_name;
+		char *local_name, *local_address;
 		bt_adapter_set_name("Red Light");
 		bt_adapter_get_name(&local_name);
-		_I(local_name);
-		free(local_name);
+		_I("Bluetooth adapter name: %s", local_name);
+		if (local_name)
+			free(local_name);
+		bt_adapter_get_address(&local_address);
+		_I("Bluetooth adapter address: %s", local_address);
+		if (local_address)
+			free(local_address);
 		get_bluetooth_adapter_visibility(1);
 	}
     return true;
