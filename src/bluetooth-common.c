@@ -8,7 +8,6 @@
 #include "bluetooth-common.h"
 
 bt_error_e ret;
-bt_adapter_visibility_mode_e mode; // Visibility mode of the Bluetooth device
 
 void init_bluetooth() {
 	ret = bt_initialize();
@@ -68,6 +67,8 @@ void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void
 }
 
 bool get_bluetooth_adapter_visibility(int duration) {
+	/* Visibility mode of the Bluetooth device */
+	bt_adapter_visibility_mode_e mode;
 	/*
 	   Duration until the visibility mode is changed
 	   so that other devices cannot find your device
@@ -81,4 +82,18 @@ bool get_bluetooth_adapter_visibility(int duration) {
 	else
 	    dlog_print(DLOG_INFO, LOG_TAG, "The device is discoverable for a set period of time.");
 	return !(mode == BT_ADAPTER_VISIBILITY_MODE_NON_DISCOVERABLE);
+}
+
+void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data) {
+    if (result != BT_ERROR_NONE) {
+        /* Error handling */
+
+        return;
+    }
+    if (visibility_mode == BT_ADAPTER_VISIBILITY_MODE_NON_DISCOVERABLE)
+        dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] None discoverable mode!");
+    else if (visibility_mode == BT_ADAPTER_VISIBILITY_MODE_GENERAL_DISCOVERABLE)
+        dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] General discoverable mode!");
+    else
+        dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] Limited discoverable mode!");
 }

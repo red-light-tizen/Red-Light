@@ -31,6 +31,10 @@ void service_app_control(app_control_h app_control, void *data)
 	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
 	if (ret != BT_ERROR_NONE)
 	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
+
+	ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
     return;
 }
 
