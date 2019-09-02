@@ -13,6 +13,7 @@
 #include "red-light.h"
 
 void init_bluetooth();
+void deinit_bluetooth();
 bool get_bluetooth_adapter_state();
 bool get_bluetooth_adapter_visibility(int);
 

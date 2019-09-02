@@ -27,6 +27,7 @@ bool service_app_create(void *data)
 void service_app_terminate(void *data)
 {
     // Todo: add your code here.
+	deinit_bluetooth();
     return;
 }
 

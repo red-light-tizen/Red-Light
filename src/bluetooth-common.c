@@ -18,6 +18,13 @@ void init_bluetooth() {
 	}
 }
 
+void deinit_bluetooth() {
+	/* Deinitialize Bluetooth */
+	ret = bt_deinitialize();
+	if (ret != BT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_deinitialize] failed.");
+}
+
 bool get_bluetooth_adapter_state() {
 	bt_adapter_state_e adapter_state;
 
