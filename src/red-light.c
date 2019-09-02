@@ -27,6 +27,9 @@ bool service_app_create(void *data)
 void service_app_terminate(void *data)
 {
     // Todo: add your code here.
+	bt_adapter_unset_state_changed_cb();
+	bt_adapter_unset_visibility_mode_changed_cb();
+
 	deinit_bluetooth();
     return;
 }
