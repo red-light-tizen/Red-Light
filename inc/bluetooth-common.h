@@ -10,6 +10,7 @@
 
 #include <bluetooth.h>
 #include "red-light.h"
+#include "bluetooth-receiver.h"
 
 void init_bluetooth();
 void deinit_bluetooth();
