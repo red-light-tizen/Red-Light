@@ -18,5 +18,6 @@ bool get_bluetooth_adapter_visibility(int);
 
 void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data);
 void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data);
+void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data);
 
 #endif /* BLUETOOTH_COMMON_H_ */

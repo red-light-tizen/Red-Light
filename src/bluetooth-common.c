@@ -8,6 +8,7 @@
 #include "bluetooth-common.h"
 
 bt_error_e ret;
+int server_socket_fd;
 
 void init_bluetooth() {
 	ret = bt_initialize();
@@ -117,4 +118,33 @@ void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e
         dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] General discoverable mode!");
     else
         dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] Limited discoverable mode!");
+}
+
+void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data) {
+    if (result != BT_ERROR_NONE) {
+        dlog_print(DLOG_ERROR, LOG_TAG, "[socket_connection_state_changed_cb] failed. result =%d.", result);
+
+        return;
+    }
+
+    if (connection_state == BT_SOCKET_CONNECTED) {
+        dlog_print(DLOG_INFO, LOG_TAG, "Callback: Connected.");
+        if (connection != NULL) {
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of connection - %d.", connection->socket_fd);
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: Role of connection - %d.", connection->local_role);
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
+            /* socket_fd is used for sending data and disconnecting a device */
+            server_socket_fd = connection->socket_fd;
+        } else {
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
+        }
+    } else {
+        dlog_print(DLOG_INFO, LOG_TAG, "Callback: Disconnected.");
+        if (connection != NULL) {
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of disconnection - %d.", connection->socket_fd);
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
+        } else {
+            dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
+        }
+    }
 }
