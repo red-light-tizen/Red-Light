@@ -135,6 +135,10 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
             /* socket_fd is used for sending data and disconnecting a device */
             server_socket_fd = connection->socket_fd;
+
+            ret = bt_socket_set_data_received_cb(socket_data_received_cb, NULL);
+            if (ret != BT_ERROR_NONE)
+                dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_data_received_cb] regist failed.");
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
@@ -143,6 +147,8 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
         if (connection != NULL) {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of disconnection - %d.", connection->socket_fd);
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
+
+            bt_socket_unset_data_received_cb();
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
