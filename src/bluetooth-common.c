@@ -9,6 +9,7 @@
 
 bt_error_e ret;
 int server_socket_fd;
+extern Ecore_Timer *send_timer;
 
 void init_bluetooth() {
 	ret = bt_initialize();
@@ -135,6 +136,12 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
             /* socket_fd is used for sending data and disconnecting a device */
             server_socket_fd = connection->socket_fd;
+
+            send_timer = ecore_timer_add(1.0, bluetooth_send_timed_cb, NULL);
+            if (!send_timer) {
+            	_E("Failed to add send_timer.");
+            	return;
+            }
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
@@ -143,6 +150,11 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
         if (connection != NULL) {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of disconnection - %d.", connection->socket_fd);
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
+
+            if (send_timer) {
+            	ecore_timer_del(send_timer);
+            	send_timer = NULL;
+            }
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }

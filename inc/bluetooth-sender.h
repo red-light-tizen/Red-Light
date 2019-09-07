@@ -8,6 +8,10 @@
 #ifndef BLUETOOTH_SENDER_H_
 #define BLUETOOTH_SENDER_H_
 
+#include <Ecore.h>
 #include "bluetooth-common.h"
+
+void send_bluetooth_data(const char *, int);
+Eina_Bool bluetooth_send_timed_cb(void *);
 
 #endif /* BLUETOOTH_SENDER_H_ */
