@@ -7,10 +7,11 @@
 
 #include "bluetooth-common.h"
 
-bt_error_e ret;
 int server_socket_fd;
 
 void init_bluetooth() {
+	bt_error_e ret;
+
 	ret = bt_initialize();
 	if (ret != BT_ERROR_NONE) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_initialize] failed.");
@@ -18,19 +19,67 @@ void init_bluetooth() {
 		return;
 	}
 
-	char *local_name, *local_address;
 	bt_adapter_set_name("Red Light");
+
+	char *local_name;
 	bt_adapter_get_name(&local_name);
 	_I("Bluetooth adapter name: %s", local_name);
 	if (local_name)
 		free(local_name);
+
+	char *local_address;
 	bt_adapter_get_address(&local_address);
 	_I("Bluetooth adapter address: %s", local_address);
 	if (local_address)
 		free(local_address);
+
+	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
+
+	ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
+
+	if (get_bluetooth_adapter_state() && get_bluetooth_adapter_visibility(1)) {
+		server_socket_fd = -1;
+
+		ret = bt_socket_create_rfcomm(BLUETOOTH_UUID, &server_socket_fd);
+		if (ret != BT_ERROR_NONE)
+			dlog_print(DLOG_ERROR, LOG_TAG, "bt_socket_create_rfcomm() failed.");
+
+		ret = bt_socket_listen_and_accept_rfcomm(server_socket_fd, MAX_PENDING_CONNECTIONS);
+		if (ret != BT_ERROR_NONE) {
+			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] failed.");
+			return;
+		} else {
+			dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] Succeeded. bt_socket_connection_state_changed_cb will be called.");
+			/* Waiting for incoming connections */
+		}
+
+		ret = bt_socket_set_connection_state_changed_cb(socket_connection_state_changed, NULL);
+		if (ret != BT_ERROR_NONE) {
+			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_set_connection_state_changed_cb] failed.");
+			return;
+		}
+	}
 }
 
 void deinit_bluetooth() {
+	bt_error_e ret;
+
+	unset_bluetooth_data_receiving();
+	unset_bluetooth_data_sending();
+
+	ret = bt_socket_destroy_rfcomm(server_socket_fd);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_destroy_rfcomm] failed.");
+	else
+		dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_destroy_rfcomm] succeeded. socket_fd = %d", server_socket_fd);
+
+	bt_adapter_unset_state_changed_cb();
+	bt_adapter_unset_visibility_mode_changed_cb();
+
 	/* Deinitialize Bluetooth */
 	ret = bt_deinitialize();
 	if (ret != BT_ERROR_NONE)
@@ -38,6 +87,7 @@ void deinit_bluetooth() {
 }
 
 bool get_bluetooth_adapter_state() {
+	bt_error_e ret;
 	bt_adapter_state_e adapter_state;
 
 	/* Check whether the Bluetooth adapter is enabled */
@@ -136,9 +186,8 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
             /* socket_fd is used for sending data and disconnecting a device */
             server_socket_fd = connection->socket_fd;
 
-            ret = bt_socket_set_data_received_cb(socket_data_received_cb, NULL);
-            if (ret != BT_ERROR_NONE)
-                dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_data_received_cb] regist failed.");
+            set_bluetooth_data_receiving();
+            set_bluetooth_data_sending();
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
@@ -148,7 +197,8 @@ void socket_connection_state_changed(int result, bt_socket_connection_state_e co
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of disconnection - %d.", connection->socket_fd);
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
 
-            bt_socket_unset_data_received_cb();
+            unset_bluetooth_data_receiving();
+            unset_bluetooth_data_sending();
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }

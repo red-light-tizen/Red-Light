@@ -11,6 +11,10 @@
 #include <bluetooth.h>
 #include "red-light.h"
 #include "bluetooth-receiver.h"
+#include "bluetooth-sender.h"
+
+#define BLUETOOTH_UUID "E9E2ED52-12AA-405A-AB1F-0C70878EFFD9"
+#define MAX_PENDING_CONNECTIONS 5
 
 void init_bluetooth();
 void deinit_bluetooth();
