@@ -1,5 +1,5 @@
-#ifndef __red-light_H__
-#define __red-light_H__
+#ifndef __red_light_H__
+#define __red_light_H__
 
 #include <dlog.h>
 #include "bluetooth-common.h"

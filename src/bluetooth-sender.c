@@ -30,13 +30,16 @@ void send_bluetooth_data(const char *data, int length) {
 	bt_error_e ret;
 	int client_socket_fd = server_socket_fd;
 
+	//ret is length of sent data
 	ret = bt_socket_send_data(client_socket_fd, data, length);
-	if (ret != BT_ERROR_NONE)
+	if (ret <= -1)
 	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_send_data] failed.");
 }
 
 Eina_Bool bluetooth_send_timed_cb(void *data) {
-	char *my_data = "2019;243;59123051;4;098;3750;09820;0230;+36.23422;-128.35869;";
+	char my_data[62];
+	// now u can use 98 instead of 098.
+	sprintf(my_data, "0000;000;00000000;1;%d;0000;00000;0000;+00.00000;-000.00000;",(rand()%100+50));
 	send_bluetooth_data(my_data, strlen(my_data) + 1);
 
 	return ECORE_CALLBACK_RENEW;
