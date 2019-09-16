@@ -15,7 +15,7 @@
 
 void set_bluetooth_data_sending();
 void unset_bluetooth_data_sending();
-void send_bluetooth_data(const char *, int);
-Eina_Bool bluetooth_send_timed_cb(void *);
+bt_error_e send_bluetooth_data(const char *, int);
+static Eina_Bool bluetooth_send_timed_cb(void *);
 
 #endif /* BLUETOOTH_SENDER_H_ */

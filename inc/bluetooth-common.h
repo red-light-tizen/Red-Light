@@ -16,13 +16,22 @@
 #define BLUETOOTH_UUID "E9E2ED52-12AA-405A-AB1F-0C70878EFFD9"
 #define MAX_PENDING_CONNECTIONS 5
 
-void init_bluetooth();
-void deinit_bluetooth();
+bt_error_e init_bluetooth();
+bt_error_e deinit_bluetooth();
 bool get_bluetooth_adapter_state();
+bt_error_e set_bluetooth_adapter_state_changed();
+void unset_bluetooth_adapter_state_changed();
+bt_error_e set_bluetooth_adapter_visibility_changed();
+void unset_bluetooth_adapter_visibility_changed();
 bool get_bluetooth_adapter_visibility(int);
+bt_error_e create_bluetooth_socket();
+bt_error_e destroy_bluetooth_socket();
+bt_error_e listen_and_accept_bluetooth_socket();
+bt_error_e set_bluetooth_socket_connection_state_changed();
+void unset_bluetooth_socket_connection_state_changed();
 
-void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data);
-void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data);
-void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data);
+static void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data);
+static void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data);
+static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data);
 
 #endif /* BLUETOOTH_COMMON_H_ */

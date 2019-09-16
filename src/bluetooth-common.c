@@ -9,14 +9,14 @@
 
 int server_socket_fd;
 
-void init_bluetooth() {
+bt_error_e init_bluetooth() {
 	bt_error_e ret;
 
 	ret = bt_initialize();
 	if (ret != BT_ERROR_NONE) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_initialize] failed.");
 
-		return;
+		return ret;
 	}
 
 	bt_adapter_set_name("Red Light");
@@ -33,57 +33,35 @@ void init_bluetooth() {
 	if (local_address)
 		free(local_address);
 
-	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
-	if (ret != BT_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
-
-	ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
-	if (ret != BT_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
+	set_bluetooth_adapter_state_changed();
+	set_bluetooth_adapter_visibility_changed();
 
 	if (get_bluetooth_adapter_state() && get_bluetooth_adapter_visibility(1)) {
-		server_socket_fd = -1;
-
-		ret = bt_socket_create_rfcomm(BLUETOOTH_UUID, &server_socket_fd);
-		if (ret != BT_ERROR_NONE)
-			dlog_print(DLOG_ERROR, LOG_TAG, "bt_socket_create_rfcomm() failed.");
-
-		ret = bt_socket_listen_and_accept_rfcomm(server_socket_fd, MAX_PENDING_CONNECTIONS);
-		if (ret != BT_ERROR_NONE) {
-			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] failed.");
-			return;
-		} else {
-			dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] Succeeded. bt_socket_connection_state_changed_cb will be called.");
-			/* Waiting for incoming connections */
-		}
-
-		ret = bt_socket_set_connection_state_changed_cb(socket_connection_state_changed, NULL);
-		if (ret != BT_ERROR_NONE) {
-			dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_set_connection_state_changed_cb] failed.");
-			return;
-		}
+		create_bluetooth_socket();
+		listen_and_accept_bluetooth_socket();
+		set_bluetooth_socket_connection_state_changed();
 	}
+
+	return ret;
 }
 
-void deinit_bluetooth() {
+bt_error_e deinit_bluetooth() {
 	bt_error_e ret;
 
 	unset_bluetooth_data_receiving();
 	unset_bluetooth_data_sending();
 
-	ret = bt_socket_destroy_rfcomm(server_socket_fd);
-	if (ret != BT_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_destroy_rfcomm] failed.");
-	else
-		dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_destroy_rfcomm] succeeded. socket_fd = %d", server_socket_fd);
+	destroy_bluetooth_socket();
 
-	bt_adapter_unset_state_changed_cb();
-	bt_adapter_unset_visibility_mode_changed_cb();
+	unset_bluetooth_adapter_visibility_changed();
+	unset_bluetooth_adapter_state_changed();
 
 	/* Deinitialize Bluetooth */
 	ret = bt_deinitialize();
 	if (ret != BT_ERROR_NONE)
 	    dlog_print(DLOG_ERROR, LOG_TAG, "[bt_deinitialize] failed.");
+
+	return ret;
 }
 
 bool get_bluetooth_adapter_state() {
@@ -107,7 +85,21 @@ bool get_bluetooth_adapter_state() {
 	}
 }
 
-void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data) {
+bt_error_e set_bluetooth_adapter_state_changed() {
+	bt_error_e ret;
+
+	ret = bt_adapter_set_state_changed_cb(adapter_state_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_state_changed_cb()] failed.");
+
+	return ret;
+}
+
+void unset_bluetooth_adapter_state_changed() {
+	bt_adapter_unset_state_changed_cb();
+}
+
+static void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data) {
     if (result != BT_ERROR_NONE) {
         dlog_print(DLOG_ERROR, LOG_TAG, "[adapter_state_changed_cb] failed! result=%d", result);
 
@@ -156,7 +148,21 @@ bool get_bluetooth_adapter_visibility(int duration) {
 	return true;
 }
 
-void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data) {
+bt_error_e set_bluetooth_adapter_visibility_changed() {
+	bt_error_e ret;
+
+	ret = bt_adapter_set_visibility_mode_changed_cb(adapter_visibility_mode_changed_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_adapter_set_visibility_mode_changed_cb] failed.");
+
+	return ret;
+}
+
+void unset_bluetooth_adapter_visibility_changed() {
+	bt_adapter_unset_visibility_mode_changed_cb();
+}
+
+static void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data) {
     if (result != BT_ERROR_NONE) {
         /* Error handling */
 
@@ -170,7 +176,58 @@ void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e
         dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] Limited discoverable mode!");
 }
 
-void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data) {
+bt_error_e create_bluetooth_socket() {
+	bt_error_e ret;
+
+	server_socket_fd = -1;
+	ret = bt_socket_create_rfcomm(BLUETOOTH_UUID, &server_socket_fd);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "bt_socket_create_rfcomm() failed.");
+
+	return ret;
+}
+
+bt_error_e destroy_bluetooth_socket() {
+	bt_error_e ret;
+
+	ret = bt_socket_destroy_rfcomm(server_socket_fd);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_destroy_rfcomm] failed.");
+	else
+		dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_destroy_rfcomm] succeeded. socket_fd = %d", server_socket_fd);
+
+	return ret;
+}
+
+bt_error_e listen_and_accept_bluetooth_socket() {
+	bt_error_e ret;
+
+	ret = bt_socket_listen_and_accept_rfcomm(server_socket_fd, MAX_PENDING_CONNECTIONS);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] failed.");
+	else {
+		dlog_print(DLOG_INFO, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] Succeeded. bt_socket_connection_state_changed_cb will be called.");
+		/* Waiting for incoming connections */
+	}
+
+	return ret;
+}
+
+bt_error_e set_bluetooth_socket_connection_state_changed() {
+	bt_error_e ret;
+
+	ret = bt_socket_set_connection_state_changed_cb(socket_connection_state_changed, NULL);
+	if (ret != BT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_set_connection_state_changed_cb] failed.");
+
+	return ret;
+}
+
+void unset_bluetooth_socket_connection_state_changed() {
+	bt_socket_unset_connection_state_changed_cb();
+}
+
+static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data) {
     if (result != BT_ERROR_NONE) {
         dlog_print(DLOG_ERROR, LOG_TAG, "[socket_connection_state_changed_cb] failed. result =%d.", result);
 

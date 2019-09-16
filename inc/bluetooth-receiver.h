@@ -10,9 +10,9 @@
 
 #include "bluetooth-common.h"
 
-void set_bluetooth_data_receiving();
+bt_error_e set_bluetooth_data_receiving();
 void unset_bluetooth_data_receiving();
 
-void socket_data_received_cb(bt_socket_received_data_s* data, void* user_data);
+static void socket_data_received_cb(bt_socket_received_data_s* data, void* user_data);
 
 #endif /* BLUETOOTH_RECEIVER_H_ */
