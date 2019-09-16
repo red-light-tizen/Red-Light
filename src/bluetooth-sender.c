@@ -39,10 +39,27 @@ bt_error_e send_bluetooth_data(const char *data, int length) {
 }
 
 static Eina_Bool bluetooth_send_timed_cb(void *data) {
-	char my_data[62];
-	// now u can use 98 instead of 098.
-	sprintf(my_data, "0000;000;00000000;1;%d;0000;00000;0000;+00.00000;-000.00000;",(rand()%100+50));
+	char my_data[DATA_SIZE];
+	create_data_packet(my_data);
 	send_bluetooth_data(my_data, strlen(my_data) + 1);
 
 	return ECORE_CALLBACK_RENEW;
+}
+
+static void create_data_packet(char *data) {
+	time_t t = time(NULL);
+	struct tm *timestamp = localtime(&t);
+	int year = timestamp->tm_year + 1900;
+	int day_of_year = timestamp->tm_yday + 1;
+	int second_of_day = timestamp->tm_hour * 3600 + timestamp->tm_min * 60 + timestamp->tm_sec;
+
+	int condition = rand() % 3;
+	int pulse = rand() % 100 + 50;
+	int temperature = (rand() % 30 + 350) * 10;
+	int spo2 = (rand() % 10 + 90) * 100;
+	int activity = 0000;
+	double latitude = 37.482215;
+	double longitude = 126.885343;
+
+	snprintf(data, DATA_SIZE, "%d;%d;%d;%d;%d;%d;%d;%d;%f;%f;", year, day_of_year, second_of_day, condition, pulse, temperature, spo2, activity, latitude, longitude);
 }
