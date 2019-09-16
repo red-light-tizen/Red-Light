@@ -27,11 +27,14 @@ bool get_bluetooth_adapter_visibility(int);
 bt_error_e create_bluetooth_socket();
 bt_error_e destroy_bluetooth_socket();
 bt_error_e listen_and_accept_bluetooth_socket();
+bt_error_e set_bluetooth_socket_connection_requested();
+void unset_bluetooth_socket_connection_requested();
 bt_error_e set_bluetooth_socket_connection_state_changed();
 void unset_bluetooth_socket_connection_state_changed();
 
 static void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_state, void* user_data);
 static void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data);
+static void socket_connection_requested_cb(int, const char *, void *);
 static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data);
 
 #endif /* BLUETOOTH_COMMON_H_ */

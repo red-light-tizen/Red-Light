@@ -39,6 +39,7 @@ bt_error_e init_bluetooth() {
 	if (get_bluetooth_adapter_state() && get_bluetooth_adapter_visibility(1)) {
 		create_bluetooth_socket();
 		listen_and_accept_bluetooth_socket();
+		set_bluetooth_socket_connection_requested();
 		set_bluetooth_socket_connection_state_changed();
 	}
 
@@ -48,11 +49,11 @@ bt_error_e init_bluetooth() {
 bt_error_e deinit_bluetooth() {
 	bt_error_e ret;
 
-	unset_bluetooth_data_receiving();
 	unset_bluetooth_data_sending();
-
+	unset_bluetooth_data_receiving();
+	unset_bluetooth_socket_connection_state_changed();
+	unset_bluetooth_socket_connection_requested();
 	destroy_bluetooth_socket();
-
 	unset_bluetooth_adapter_visibility_changed();
 	unset_bluetooth_adapter_state_changed();
 
@@ -211,6 +212,25 @@ bt_error_e listen_and_accept_bluetooth_socket() {
 	}
 
 	return ret;
+}
+
+bt_error_e set_bluetooth_socket_connection_requested() {
+	bt_error_e ret;
+
+	ret = bt_socket_set_connection_requested_cb(socket_connection_requested_cb, NULL);
+	if (ret != BT_ERROR_NONE)
+		_E("[bt_socket_set_connection_requested_cb] failed.");
+
+	return ret;
+}
+
+void unset_bluetooth_socket_connection_requested() {
+	bt_socket_unset_connection_requested_cb();
+}
+
+static void socket_connection_requested_cb(int socket_fd, const char *remote_address, void *user_data) {
+	_I("Callback: Socket of request - %d", socket_fd);
+	_I("Callback: Address of request - %s", remote_address);
 }
 
 bt_error_e set_bluetooth_socket_connection_state_changed() {

@@ -8,7 +8,7 @@
 #include "bluetooth-sender.h"
 
 extern int server_socket_fd;
-Ecore_Timer *send_timer;
+static Ecore_Timer *send_timer;
 
 void set_bluetooth_data_sending() {
 	send_timer = ecore_timer_add(DATA_SENDING_CYCLE, bluetooth_send_timed_cb, NULL);
