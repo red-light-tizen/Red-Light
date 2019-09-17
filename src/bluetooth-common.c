@@ -202,7 +202,6 @@ bt_error_e destroy_bluetooth_socket() {
 
 bt_error_e listen_and_accept_bluetooth_socket() {
 	bt_error_e ret;
-
 	ret = bt_socket_listen_and_accept_rfcomm(server_socket_fd, MAX_PENDING_CONNECTIONS);
 	if (ret != BT_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_listen_and_accept_rfcomm] failed.");
@@ -216,7 +215,6 @@ bt_error_e listen_and_accept_bluetooth_socket() {
 
 bt_error_e set_bluetooth_socket_connection_requested() {
 	bt_error_e ret;
-
 	ret = bt_socket_set_connection_requested_cb(socket_connection_requested_cb, NULL);
 	if (ret != BT_ERROR_NONE)
 		_E("[bt_socket_set_connection_requested_cb] failed.");
@@ -229,13 +227,13 @@ void unset_bluetooth_socket_connection_requested() {
 }
 
 static void socket_connection_requested_cb(int socket_fd, const char *remote_address, void *user_data) {
+	_I("T3");
 	_I("Callback: Socket of request - %d", socket_fd);
 	_I("Callback: Address of request - %s", remote_address);
 }
 
 bt_error_e set_bluetooth_socket_connection_state_changed() {
 	bt_error_e ret;
-
 	ret = bt_socket_set_connection_state_changed_cb(socket_connection_state_changed, NULL);
 	if (ret != BT_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "[bt_socket_set_connection_state_changed_cb] failed.");
@@ -247,8 +245,10 @@ void unset_bluetooth_socket_connection_state_changed() {
 	bt_socket_unset_connection_state_changed_cb();
 }
 
+
+
 static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data) {
-    if (result != BT_ERROR_NONE) {
+	if (result != BT_ERROR_NONE) {
         dlog_print(DLOG_ERROR, LOG_TAG, "[socket_connection_state_changed_cb] failed. result =%d.", result);
 
         return;
@@ -257,6 +257,25 @@ static void socket_connection_state_changed(int result, bt_socket_connection_sta
     if (connection_state == BT_SOCKET_CONNECTED) {
         dlog_print(DLOG_INFO, LOG_TAG, "Callback: Connected.");
         if (connection != NULL) {
+
+        	/*
+        	 * Check device is paired.
+        	 * Add device to trusted device list after pairing.
+        	 * bonded == trusted.
+        	 * If who know this app's UUID, he can add device to trusted device list.
+        	 * I think there is a security problem.
+        	 * TODO : Add Handshake and replace authorization function's position into handshake function.
+        	*/
+
+        	bt_device_info_s* device;
+        	bt_error_e ret =  bt_adapter_get_bonded_device_info(connection->remote_address, &device);
+
+        	if(ret == BT_ERROR_REMOTE_DEVICE_NOT_BONDED){
+        		bt_device_set_bond_created_cb(add_bluetooth_device_authorization, NULL);
+        		bt_device_create_bond(connection->remote_address);
+        	}
+
+
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Socket of connection - %d.", connection->socket_fd);
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Role of connection - %d.", connection->local_role);
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: Address of connection - %s.", connection->remote_address);
@@ -280,4 +299,10 @@ static void socket_connection_state_changed(int result, bt_socket_connection_sta
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
     }
+}
+
+static void add_bluetooth_device_authorization(int result, bt_device_info_s *device_info, void *user_data){
+	if(result == BT_ERROR_NONE){
+		bt_device_set_authorization(device_info->remote_address, BT_DEVICE_AUTHORIZED);
+	}
 }

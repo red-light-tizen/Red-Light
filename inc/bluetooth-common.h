@@ -36,5 +36,6 @@ static void adapter_state_changed_cb(int result, bt_adapter_state_e adapter_stat
 static void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility_mode_e visibility_mode, void* user_data);
 static void socket_connection_requested_cb(int, const char *, void *);
 static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data);
+static void add_bluetooth_device_authorization(int result, bt_device_info_s *device_info, void *user_data);
 
 #endif /* BLUETOOTH_COMMON_H_ */
