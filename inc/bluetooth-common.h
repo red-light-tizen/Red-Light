@@ -24,6 +24,7 @@ void unset_bluetooth_adapter_state_changed();
 bt_error_e set_bluetooth_adapter_visibility_changed();
 void unset_bluetooth_adapter_visibility_changed();
 bool get_bluetooth_adapter_visibility(int);
+int get_bluetooth_socket_fd();
 bt_error_e create_bluetooth_socket();
 bt_error_e destroy_bluetooth_socket();
 bt_error_e listen_and_accept_bluetooth_socket();

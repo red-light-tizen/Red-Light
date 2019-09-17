@@ -7,7 +7,6 @@
 
 #include "bluetooth-sender.h"
 
-extern int server_socket_fd;
 static Ecore_Timer *send_timer;
 
 void set_bluetooth_data_sending() {
@@ -28,7 +27,7 @@ void unset_bluetooth_data_sending() {
 
 bt_error_e send_bluetooth_data(const char *data, int length) {
 	bt_error_e ret;
-	int client_socket_fd = server_socket_fd;
+	int client_socket_fd = get_bluetooth_socket_fd();
 
 	//ret is length of sent data
 	ret = bt_socket_send_data(client_socket_fd, data, length);

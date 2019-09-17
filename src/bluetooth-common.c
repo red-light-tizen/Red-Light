@@ -7,7 +7,7 @@
 
 #include "bluetooth-common.h"
 
-int server_socket_fd;
+static int server_socket_fd;
 
 bt_error_e init_bluetooth() {
 	bt_error_e ret;
@@ -177,6 +177,10 @@ static void adapter_visibility_mode_changed_cb(int result, bt_adapter_visibility
         dlog_print(DLOG_INFO, LOG_TAG, "[visibility_mode_changed_cb] Limited discoverable mode!");
 }
 
+int get_bluetooth_socket_fd() {
+	return server_socket_fd;
+}
+
 bt_error_e create_bluetooth_socket() {
 	bt_error_e ret;
 
@@ -244,8 +248,6 @@ bt_error_e set_bluetooth_socket_connection_state_changed() {
 void unset_bluetooth_socket_connection_state_changed() {
 	bt_socket_unset_connection_state_changed_cb();
 }
-
-
 
 static void socket_connection_state_changed(int result, bt_socket_connection_state_e connection_state, bt_socket_connection_s *connection, void *user_data) {
 	if (result != BT_ERROR_NONE) {
