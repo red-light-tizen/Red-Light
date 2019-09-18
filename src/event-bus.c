@@ -6,54 +6,95 @@
  */
 #include "event-bus.h"
 
-static const int eventMax = 100000;
+#define eventMax 100000
+
+static void stopEventDelivery();
+static r_event* create_rEvent(size_t datalen, void* data);
 
 static r_event* events[eventMax] = { 0 };
 static Ecore_Idler *bus_excutor;
+static int registrable;
+static int activeEvent = 0;
 
-r_event* create_Event(void (*subs)(void*), int delayMill, void* data, size_t datalen) {
+r_event* create_rEvent(size_t datalen, void* data) {
 	r_event *event = malloc(sizeof(r_event));
-
-	event->subsicriber = subs;
-
 	event->data = malloc(datalen);
-	memcpy(event->data , data, datalen);
-	event->expireTime = clock() + delayMill;
-
+	event->subsNumber = 0;
+	if(data)
+		memcpy(event->data, data, datalen);
 	return event;
 }
 
-int registerEvent(r_event *event) {
+r_event* addSubs(r_event* event, void (*subs)(void*)) {
+	event->subsicriber[event->subsNumber] = subs;
+	++(event->subsNumber);
+	return event;
+}
+
+int _register_Event(size_t datalen, void* data, int funcCount, ...) {
+
+	if(!registrable){
+		_I("RegisterEvent : Registering is rejected.");
+		return -1;
+	}
+
+	if (funcCount > MAX_SUBS_PER_EVENT) {
+		_Fail("RegisterEvent : Too much Number of functions.");
+		return -1;
+
+	}
+
+	va_list args;
+	va_start(args, funcCount);
+
+	r_event* event = create_rEvent(datalen, data);
+
+	for (int i = 0; i < funcCount; ++i) {
+		fp_rvpv subs;
+		subs = va_arg(args, fp_rvpv);
+		addSubs(event, subs);
+	}
+
+	va_end(args);
+
 	for (int i = 0; i < eventMax; ++i) {
 		if (events[i] == NULL) {
 			events[i] = event;
-			return 1;
+			return i;
 		}
 	}
-	_E("EventQueue is full");
-	return 0;
+	return -1;
 }
 
 Eina_Bool delivery() {
-	long currentTime = clock();
-//	_I("current %ld", currentTime);
 	for (int i = 0; i < eventMax; ++i) {
 
-		if (events[i]) {
-			if (events[i]->expireTime < currentTime) {
-				events[i]->subsicriber(events[i]->data);
-				free(events[i]->data);
-				events[i]->data = NULL;
-				free(events[i]);
-				events[i] = NULL;
+		if (events[i] != NULL) {
+			for (int j = 0; j < events[i]->subsNumber; ++j) {
+				events[i]->subsicriber[j](events[i]->data);
 			}
+			free(events[i]->data);
+			events[i]->data = NULL;
+
+			free(events[i]);
+			events[i] = NULL;
+			--activeEvent;
 		}
 
+	}
+
+	if (!registrable && activeEvent <= 0) {
+		_I("%d",activeEvent);
+		stopEventDelivery();
+		return ECORE_CALLBACK_CANCEL;
 	}
 	return ECORE_CALLBACK_RENEW;
 }
 
 void startEventDelivery() {
+	registrable = 1;
+	++activeEvent;
+	_I("EventBus is Started");
 	bus_excutor = ecore_idler_add(delivery, NULL);
 	if (!bus_excutor) {
 		_E("Error on StartDelivery");
@@ -62,5 +103,11 @@ void startEventDelivery() {
 }
 
 void stopEventDelivery() {
+	_I("EventBus is Stopped");
 	ecore_idler_del(bus_excutor);
+}
+
+void finishEventDelivery() {
+	_I("EventBus is close");
+	registrable = 0;
 }

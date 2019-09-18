@@ -10,6 +10,7 @@
 
 
 #include <dlog.h>
+#include <stdbool.h>
 
 #ifdef  LOG_TAG
 #undef  LOG_TAG

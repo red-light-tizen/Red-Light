@@ -3,27 +3,28 @@
 #include "red-light.h"
 
 //-------for test--------
-Ecore_Timer *funcadder;
-
 void testFunc(void* data) {
 	_I("test func printed %lf ", *(double* )data);
 }
 
-Eina_Bool testfuncAdder() {
+void testFunc2(void* data) {
+	_I("test func2 printed %lf ", 1000- *(double* )data);
+}
+
+void testfuncAdder() {
 	static double data = 0.0;
 	data += 10.0;
-	if (data < 1000) {
-		registerEvent(
-				create_Event(testFunc, (int) data * 1000, &data, sizeof(data)));
-		return ECORE_CALLBACK_RENEW;
-	}
-	return ECORE_CALLBACK_CANCEL;
+
+	registerEvent(double,data,testFunc,testFunc2);
+
 }
 
 //-------for test--------
 
 bool service_app_create(void *data) {
 	// Todo: add your code here.
+
+
 	startEventDelivery();
 	_I("Created");
 	return true;
@@ -32,9 +33,7 @@ bool service_app_create(void *data) {
 void service_app_terminate(void *data) {
 	// Todo: add your code here.
 
-	ecore_timer_del(funcadder);
-
-	stopEventDelivery();
+	finishEventDelivery();
 
 	_I("terminated");
 	return;
@@ -42,12 +41,11 @@ void service_app_terminate(void *data) {
 
 void service_app_control(app_control_h app_control, void *data) {
 	// Todo: add your code here.
-	funcadder = ecore_timer_add(0.001, testfuncAdder, NULL);
-	if (!funcadder) {
-		_E("Error on StartDelivery");
-		return;
-	}
+	int i;
+	for(i = 0; i<100;++i)
+		registerEvent(void,*NULL,testfuncAdder);
 
+//	finishEventDelivery();
 	return;
 }
 
