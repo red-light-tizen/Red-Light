@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "event-bus.h"
 #include "input-getter.h"
+#include "bluetooth-sender.h"
 
 #define STATUS_NORMAL 0
 #define STATUS_CAUTION 1
@@ -30,6 +31,6 @@ typedef struct condition_datatype {
 } condition_data;
 
 void checkCondition();
-int evaluateStatus();
+int evaluateStatus(body_data data);
 
 #endif /* CONDITION_INDICATOR_H_ */

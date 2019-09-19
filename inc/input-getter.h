@@ -8,7 +8,7 @@
 #ifndef INPUT_GETTER_H_
 #define INPUT_GETTER_H_
 
-#include "red-light.h"
+#include "utils.h"
 
 /**
  * All of "get_?" functions are returning last stored data in the buffer.

@@ -284,7 +284,9 @@ static void socket_connection_state_changed(int result, bt_socket_connection_sta
             server_socket_fd = connection->socket_fd;
 
             set_bluetooth_data_receiving();
-            set_bluetooth_data_sending();
+//            set_bluetooth_data_sending();
+            registerEvent(void,*NULL,checkCondition);
+
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
