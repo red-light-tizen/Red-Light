@@ -7,5 +7,6 @@
     </service-application>
     <privileges>
         <privilege>http://tizen.org/privilege/bluetooth</privilege>
+        <privilege>http://tizen.org/privilege/peripheralio</privilege>
     </privileges>
 </manifest>

@@ -8,6 +8,6 @@
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
-
+#include <peripheral_io.h>
 
 #endif /* SENSOR_H_ */
