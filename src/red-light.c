@@ -26,6 +26,8 @@ bool service_app_create(void *data) {
 	init_bluetooth();
 
 	startEventDelivery();
+	open_sensor_pulse();
+	set_sensor_pulse_getting();
 	_I("Created");
 	return true;
 }
@@ -35,7 +37,8 @@ void service_app_terminate(void *data) {
 	deinit_bluetooth();
 
 	finishEventDelivery();
-
+	unset_sensor_pulse_getting();
+	close_sensor_pulse();
 	_I("terminated");
 	return;
 }
