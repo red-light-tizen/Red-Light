@@ -16,11 +16,6 @@
 #define BLUETOOTH_UUID "E9E2ED52-12AA-405A-AB1F-0C70878EFFD9"
 #define MAX_PENDING_CONNECTIONS 5
 
-typedef struct bt_datatype{
-	int length;
-	char* message;
-}bt_data;
-
 bt_error_e init_bluetooth();
 bt_error_e deinit_bluetooth();
 bool get_bluetooth_adapter_state();
