@@ -9,5 +9,6 @@
 #define SENSOR_H_
 
 #include <peripheral_io.h>
+#include "sensor-pulse.h"
 
 #endif /* SENSOR_H_ */
