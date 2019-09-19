@@ -11,6 +11,7 @@
 
 #include <dlog.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifdef  LOG_TAG
 #undef  LOG_TAG

@@ -25,19 +25,19 @@ body_data get_sensor_data(){
 }
 
 int get_pulse() {
-	int pulse = 98;
+	int pulse = rand() % 100 + 50;
 	_I("Pulse: %d", pulse);
 	return pulse;
 }
 
 double get_temperature() {
-	double temperature = 37.5;
+	double temperature = (rand() % 30 + 350) * 10;
 	_I("Temperature: %lf", temperature);
 	return temperature;
 }
 
 double get_spo2() {
-	double spo2 = 98.2;
+	double spo2 = (rand() % 10 + 90);
 	_I("SPO2: %lf", spo2);
 	return spo2;
 }

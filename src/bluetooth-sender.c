@@ -30,7 +30,7 @@ bt_error_e send_bluetooth_data(void* data) {
 	int client_socket_fd = get_bluetooth_socket_fd();
 
 	//ret is length of sent data
-	bt_data btdata = *(bt_data*)data;
+	bt_data btdata = VPto(bt_data)data;
 
 	ret = bt_socket_send_data(client_socket_fd, btdata.message, btdata.length);
 	if (ret <= -1)
@@ -40,10 +40,8 @@ bt_error_e send_bluetooth_data(void* data) {
 }
 
 static Eina_Bool bluetooth_send_timed_cb(void *data) {
-//	char my_data[DATA_SIZE];
-	bt_data my_data;
-	create_data_packet(&my_data);
-//	send_bluetooth_data(my_data);
+
+	registerEvent(void,*NULL,checkCondition);
 
 	return ECORE_CALLBACK_RENEW;
 }
@@ -59,7 +57,7 @@ void create_data_packet(void *data) {
 
 	int status = condition.status;
 	int pulse = condition.pulse;
-	int temperature = condition.temprature*100;
+	int temperature = condition.temprature;
 	int spo2 = condition.spo2*100;
 	int activity = condition.activity;
 	double latitude = condition.latitude;

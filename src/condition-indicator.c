@@ -23,11 +23,12 @@ void checkCondition(){
 	 condition.longitude = location.longitude;
 
 	 registerEvent(condition_data, condition, create_data_packet);
+//	 registerEvent(void,*NULL,checkCondition);
 }
 
 
 int evaluateStatus(body_data data){
 	//TODO : Calculate condition.
 
-	return STATUS_NORMAL;
+	return rand() % 3;
 }
