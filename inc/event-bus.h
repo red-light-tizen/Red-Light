@@ -31,17 +31,17 @@ typedef void(*fp_rvpv)(void*);
 #define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
 
 /**
- * @param dataType 	: Type name of data.
- * @param data 		: Data for functions. (NOT POINTER, NOT NULL)
+ * @param dataType 	: Type name of data. If data is string, set to data name.
+ * @param data 		: Data for functions. (NOT POINTER, NOT R-VALUE)
  * @param ... 		: Function pointers to execute.(MAX = MAX_SUBS_PER_EVENT)
  *
- * @return int 		: ID number of event.
+ * @return int 		: ID number of event. If registering is fail, returns -1;
  *
  * @note : If you don't want pass data, set data to "*NULL".
  *
  *
  * @usage : registerEvent(double, data, functions...);
  */
-#define registerEvent(dataType,data,...) _register_Event(sizeof(dataType), &data, NUMARGS(__VA_ARGS__), __VA_ARGS__)
+#define registerEvent(dataType,data,...) _register_Event(sizeof(dataType), &(data), NUMARGS(__VA_ARGS__), __VA_ARGS__)
 
 #endif /* EVENT_BUS_H_ */

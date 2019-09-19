@@ -63,4 +63,5 @@ static void create_data_packet(bt_data *data) {
 
 	snprintf(data->message, DATA_SIZE, "%d;%d;%d;%d;%d;%d;%d;%d;%f;%f;", year, day_of_year, second_of_day, condition, pulse, temperature, spo2, activity, latitude, longitude);
 	data->length = strlen(data->message) + 1;
+
 }

@@ -231,7 +231,6 @@ void unset_bluetooth_socket_connection_requested() {
 }
 
 static void socket_connection_requested_cb(int socket_fd, const char *remote_address, void *user_data) {
-	_I("T3");
 	_I("Callback: Socket of request - %d", socket_fd);
 	_I("Callback: Address of request - %s", remote_address);
 }
