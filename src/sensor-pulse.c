@@ -76,7 +76,9 @@ static Eina_Bool sensor_get_timed_cb(void *data) {
 	int16_t spo2 = 0;
 	ret = read_sensor_pulse(&pulse, &spo2);
 
-	if (ret != PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		get_timer = NULL;
 		return ECORE_CALLBACK_CANCEL;
+	}
 	return ECORE_CALLBACK_RENEW;
 }
