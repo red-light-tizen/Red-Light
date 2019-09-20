@@ -14,9 +14,7 @@ static Ecore_Timer *get_timer;
 peripheral_error_e open_sensor_pulse() {
 	peripheral_error_e ret;
 	ret = open_sensor_i2c(MAX30100_I2C_ADDRESS, &pulse_h);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		flag = false;
-	else {
+	if (ret == PERIPHERAL_ERROR_NONE) {
 		flag = true;
 		init_sensor_pulse();
 	}
@@ -72,8 +70,7 @@ void unset_sensor_pulse_getting() {
 
 static Eina_Bool sensor_get_timed_cb(void *data) {
 	peripheral_error_e ret;
-	int16_t pulse = 0;
-	int16_t spo2 = 0;
+	int16_t pulse = 0, spo2 = 0;
 	ret = read_sensor_pulse(&pulse, &spo2);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
