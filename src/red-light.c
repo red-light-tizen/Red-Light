@@ -23,9 +23,8 @@ void testfuncAdder() {
 
 bool service_app_create(void *data) {
 	// Todo: add your code here.
-	init_bluetooth();
-
 	startEventDelivery();
+	init_bluetooth();
 	open_sensor_pulse();
 	set_sensor_pulse_getting();
 	_I("Created");
@@ -35,10 +34,9 @@ bool service_app_create(void *data) {
 void service_app_terminate(void *data) {
 	// Todo: add your code here.
 	deinit_bluetooth();
-
-	finishEventDelivery();
 	unset_sensor_pulse_getting();
 	close_sensor_pulse();
+	finishEventDelivery();
 	_I("terminated");
 	return;
 }
