@@ -26,7 +26,9 @@ bool service_app_create(void *data) {
 	startEventDelivery();
 	init_bluetooth();
 	open_sensor_pulse();
+	open_sensor_temp();
 	set_sensor_pulse_getting();
+	set_sensor_temp_getting();
 	_I("Created");
 	return true;
 }
@@ -34,7 +36,9 @@ bool service_app_create(void *data) {
 void service_app_terminate(void *data) {
 	// Todo: add your code here.
 	deinit_bluetooth();
+	unset_sensor_temp_getting();
 	unset_sensor_pulse_getting();
+	close_sensor_temp();
 	close_sensor_pulse();
 	finishEventDelivery();
 	_I("terminated");
