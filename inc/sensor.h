@@ -11,6 +11,7 @@
 #include <peripheral_io.h>
 #include <Ecore.h>
 #include "sensor-pulse.h"
+#include "adc-mcp3008.h"
 #include "utils.h"
 
 peripheral_error_e open_sensor_i2c(const int, peripheral_i2c_h *);
