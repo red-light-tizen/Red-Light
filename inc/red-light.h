@@ -3,6 +3,7 @@
 
 #include "bluetooth-common.h"
 #include "event-bus.h"
+#include "sensor.h"
 #include "utils.h"
 
 #endif /* __red-light_H__ */
