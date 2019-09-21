@@ -15,7 +15,6 @@ peripheral_error_e open_sensor_pulse() {
 	peripheral_error_e ret;
 	ret = open_sensor_i2c(MAX30100_I2C_ADDRESS, &pulse_h);
 	if (ret == PERIPHERAL_ERROR_NONE) {
-		flag = true;
 		init_sensor_pulse();
 	}
 	return ret;
@@ -27,23 +26,44 @@ void close_sensor_pulse() {
 }
 
 static void init_sensor_pulse() {
-	write_sensor_i2c_register_byte(pulse_h, MAX30100_MODE_CONFIG, 0x0B);
-	write_sensor_i2c_register_byte(pulse_h, MAX30100_LED_CONFIG, 0x44);
-	write_sensor_i2c_register_byte(pulse_h, MAX30100_SPO2_CONFIG, 0x07);
+	uint8_t previous;
+	peripheral_i2c_write_register_byte(pulse_h, MAX30100_REG_MODE_CONFIGURATION, MAX30100_MODE_SPO2_HR);
+	read_sensor_i2c_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, &previous);
+	peripheral_i2c_write_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xfc) | MAX30100_SPC_PW_1600US_16BITS);
+	read_sensor_i2c_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, &previous);
+	peripheral_i2c_write_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xe3) | (MAX30100_SAMPRATE_1000HZ << 2));
+	peripheral_i2c_write_register_byte(pulse_h, MAX30100_REG_LED_CONFIGURATION, MAX30100_LED_CURR_50MA << 4 | MAX30100_LED_CURR_50MA);
+	read_sensor_i2c_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, &previous);
+	peripheral_i2c_write_register_byte(pulse_h, MAX30100_REG_SPO2_CONFIGURATION, previous | MAX30100_SPC_SPO2_HI_RES_EN);
+	flag = true;
 }
 
-peripheral_error_e read_sensor_pulse(int16_t *pulse, int16_t *spo2) {
+peripheral_error_e read_sensor_pulse(uint16_t *pulse, uint16_t *spo2) {
 	peripheral_error_e ret;
-	uint8_t pulse_H[1], pulse_L[1];
-	uint8_t spo2_H[1], spo2_L[1];
-	ret = read_sensor_i2c_register_byte(pulse_h, MAX30100_FIFO_DATA, pulse_H);
-	ret = read_sensor_i2c_register_byte(pulse_h, MAX30100_FIFO_DATA, pulse_L);
-	ret = read_sensor_i2c_register_byte(pulse_h, MAX30100_FIFO_DATA, spo2_H);
-	ret = read_sensor_i2c_register_byte(pulse_h, MAX30100_FIFO_DATA, spo2_L);
-	int16_t p = (pulse_H[0] << 8) | pulse_L[0];
-	int16_t s = (spo2_H[0] << 8) | spo2_L[0];
-	_D("Pulse: %d", p);
+	uint8_t t1, t2;
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_WRITE_POINTER, &t1);
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_READ_POINTER, &t2);
+	uint8_t toRead = (t1 - t2) & (MAX30100_FIFO_DEPTH - 1);
+	_D("t1 %d t2 %d toread %d", (int)t1, (int)t2, (int)toRead);
+//	uint8_t buffer[MAX30100_FIFO_DEPTH * 4];
+	uint16_t p, s;
+	uint8_t ph, pl, sh, sl;
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &ph);
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &pl);
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &sh);
+	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &sl);
+	p = ((ph << 8) | pl) / 512;
+	s = ((sh << 8) | sl) / 512;
+	_D("Pulse: %d",p);
 	_D("SpO2: %d", s);
+/*	if (toRead) {
+		ret = read_sensor_i2c(pulse_h, buffer, 4 * toRead);
+
+		for (uint8_t i = 0; i < toRead; ++i) {
+			p = (uint16_t)((buffer[i * 4] << 8) | buffer[i * 4 + 1]);
+			s = (uint16_t)((buffer[i * 4 + 2] << 8) | buffer[i * 4 + 3]);
+		}
+	}*/
 	*pulse = p;
 	*spo2 = s;
 	return ret;
@@ -70,7 +90,7 @@ void unset_sensor_pulse_getting() {
 
 static Eina_Bool sensor_get_timed_cb(void *data) {
 	peripheral_error_e ret;
-	int16_t pulse = 0, spo2 = 0;
+	uint16_t pulse = 0, spo2 = 0;
 	ret = read_sensor_pulse(&pulse, &spo2);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {

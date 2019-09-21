@@ -42,10 +42,12 @@ peripheral_error_e write_sensor_i2c(peripheral_i2c_h i2c, uint8_t *data, uint32_
 
 peripheral_error_e read_sensor_i2c_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t *data) {
 	peripheral_error_e ret;
-	ret = peripheral_i2c_read_register_byte(i2c, reg, data);
+	uint8_t buf;
+	ret = peripheral_i2c_read_register_byte(i2c, reg, &buf);
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("[peripheral_i2c_read_register_byte] failed. %d %s", ret, get_error_message(ret));
 	}
+//	*data = buf;
 	return ret;
 }
 
@@ -69,7 +71,7 @@ peripheral_error_e read_sensor_i2c_register_word(peripheral_i2c_h i2c, uint8_t r
 
 peripheral_error_e write_sensor_i2c_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t data) {
 	peripheral_error_e ret;
-	ret = peripheral_i2c_write_register_word(i2c, reg, data);
+	ret = peripheral_i2c_write_register_word(i2c, reg, &data);
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("[peripheral_i2c_write_register_word] failed. %d %s", ret, get_error_message(ret));
 	}

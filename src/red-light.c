@@ -4,11 +4,11 @@
 
 //-------for test--------
 void testFunc(void* data) {
-	_I("test func printed %lf ", *(double* )data);
+//	_I("test func printed %lf ", *(double* )data);
 }
 
 void testFunc2(void* data) {
-	_I("test func2 printed %lf ", 1000- *(double* )data);
+//	_I("test func2 printed %lf ", 1000- *(double* )data);
 }
 
 void testfuncAdder() {
@@ -29,7 +29,7 @@ bool service_app_create(void *data) {
 	open_sensor_temp();
 	open_sensor_gps();
 	set_sensor_pulse_getting();
-	set_sensor_temp_getting();
+//	set_sensor_temp_getting();
 	set_sensor_gps_getting();
 	_I("Created");
 	return true;
