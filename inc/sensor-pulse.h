@@ -10,7 +10,7 @@
 
 #include "sensor.h"
 
-#define DATA_GETTING_CYCLE 0.01
+#define DATA_GETTING_CYCLE 0.1
 
 #define MAX30100_I2C_ADDRESS                    0x57
 #define MAX30100_REG_INTERRUPT_STATUS           0x00
@@ -78,5 +78,6 @@ peripheral_error_e read_sensor_pulse(uint16_t *, uint16_t *);
 bool set_sensor_pulse_getting();
 void unset_sensor_pulse_getting();
 static Eina_Bool sensor_get_timed_cb(void *);
+static Eina_Bool sensor_temp_get_timed_cb(void *);
 
 #endif /* SENSOR_PULSE_H_ */

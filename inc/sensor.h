@@ -11,9 +11,7 @@
 #include <peripheral_io.h>
 #include <Ecore.h>
 #include "sensor-pulse.h"
-#include "sensor-temp.h"
 #include "sensor-gps.h"
-#include "adc-mcp3008.h"
 #include "utils.h"
 
 #define I2C_BUS 1
