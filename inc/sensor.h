@@ -12,6 +12,7 @@
 #include <Ecore.h>
 #include "sensor-pulse.h"
 #include "sensor-temp.h"
+#include "sensor-gyro.h"
 #include "sensor-gps.h"
 #include "adc-mcp3008.h"
 #include "utils.h"
