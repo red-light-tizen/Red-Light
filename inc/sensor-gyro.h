@@ -10,7 +10,7 @@
 
 #include "sensor.h"
 
-#define DATA_GETTING_CYCLE 0.1
+#define DATA_GETTING_CYCLE 0.5
 
 #define MPU6050_ADDRESS_AD0_LOW     0x68 // address pin low (GND), default for InvenSense evaluation board
 #define MPU6050_ADDRESS_AD0_HIGH    0x69 // address pin high (VCC)

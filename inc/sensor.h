@@ -15,6 +15,7 @@
 #include "sensor-gyro.h"
 #include "sensor-gps.h"
 #include "adc-mcp3008.h"
+#include "bcm2835.h"
 #include "utils.h"
 
 #define I2C_BUS 1
@@ -28,6 +29,8 @@ peripheral_error_e read_sensor_i2c_register_byte(peripheral_i2c_h, uint8_t, uint
 peripheral_error_e write_sensor_i2c_register_byte(peripheral_i2c_h, uint8_t, uint8_t);
 peripheral_error_e read_sensor_i2c_register_word(peripheral_i2c_h, uint8_t, uint16_t *);
 peripheral_error_e write_sensor_i2c_register_word(peripheral_i2c_h, uint8_t, uint16_t);
+bool writeBit(peripheral_i2c_h i2c, uint8_t regAddr, uint8_t bitNum, uint8_t data);
+bool writeBits(peripheral_i2c_h i2c, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t data);
 
 peripheral_error_e open_sensor_uart(peripheral_uart_h *);
 void close_sensor_uart(peripheral_uart_h);
