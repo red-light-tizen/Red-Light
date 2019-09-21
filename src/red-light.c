@@ -4,11 +4,11 @@
 
 //-------for test--------
 void testFunc(void* data) {
-	_I("test func printed %lf ", *(double* )data);
+//	_I("test func printed %lf ", *(double* )data);
 }
 
 void testFunc2(void* data) {
-	_I("test func2 printed %lf ", 1000- *(double* )data);
+//	_I("test func2 printed %lf ", 1000- *(double* )data);
 }
 
 void testfuncAdder() {
@@ -47,6 +47,18 @@ void service_app_control(app_control_h app_control, void *data) {
 		registerEvent(void,*NULL,testfuncAdder);
 
 //	finishEventDelivery();
+	get_storage_directory(NULL);
+	get_storage_type();
+	get_storage_state();
+	get_storage_total_space();
+	get_storage_available_space();
+	get_storage_used_space();
+	char *p = "/opt/usr/home/owner/media/Images/test.txt";
+	write_file(p, "hello\n");
+	write_file(p, "world\n");
+	write_file(p, "bye\n");
+	write_file(p, "topmaker\n");
+	read_file(p, NULL);
 	return;
 }
 

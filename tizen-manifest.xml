@@ -6,6 +6,10 @@
         <icon>red-light.png</icon>
     </service-application>
     <privileges>
+        <privilege>http://tizen.org/privilege/mediastorage</privilege>
+        <privilege>http://tizen.org/privilege/filesystem.read</privilege>
         <privilege>http://tizen.org/privilege/bluetooth</privilege>
+        <privilege>http://tizen.org/privilege/filesystem.write</privilege>
+        <privilege>http://tizen.org/privilege/externalstorage</privilege>
     </privileges>
 </manifest>
