@@ -39,12 +39,12 @@ static void init_sensor_pulse() {
 }
 
 peripheral_error_e read_sensor_pulse(uint16_t *pulse, uint16_t *spo2) {
+//	_D("[read_sensor_pulse]");
 	peripheral_error_e ret;
 	uint8_t t1, t2;
 	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_WRITE_POINTER, &t1);
 	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_READ_POINTER, &t2);
 	uint8_t toRead = (t1 - t2) & (MAX30100_FIFO_DEPTH - 1);
-	_D("t1 %d t2 %d toread %d", (int)t1, (int)t2, (int)toRead);
 //	uint8_t buffer[MAX30100_FIFO_DEPTH * 4];
 	uint16_t p, s;
 	uint8_t ph, pl, sh, sl;
@@ -53,9 +53,13 @@ peripheral_error_e read_sensor_pulse(uint16_t *pulse, uint16_t *spo2) {
 	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &sh);
 	ret = peripheral_i2c_read_register_byte(pulse_h, MAX30100_REG_FIFO_DATA, &sl);
 	p = ((ph << 8) | pl) / 512;
-	s = ((sh << 8) | sl) / 512;
-	_D("Pulse: %d",p);
-	_D("SpO2: %d", s);
+	s = (sh << 8) | sl;
+/*	if (s > 30000)
+		s = (uint16_t)(32768.0 / s * 100);*/
+	if (p > 10)
+		_D("Pulse: %d %d %d", p, ph, pl);
+	if (s > 1000 && sh > 70 && sh < 180)
+		_D("SpO2: %d %d %d", s, sh, sl);
 /*	if (toRead) {
 		ret = read_sensor_i2c(pulse_h, buffer, 4 * toRead);
 
@@ -89,8 +93,9 @@ void unset_sensor_pulse_getting() {
 }
 
 static Eina_Bool sensor_get_timed_cb(void *data) {
-	peripheral_error_e ret;
+	peripheral_error_e ret = 0;
 	uint16_t pulse = 0, spo2 = 0;
+//	_Test(read_sensor_pulse, PERIPHERAL_ERROR_NONE, "", &pulse, &spo2);
 	ret = read_sensor_pulse(&pulse, &spo2);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {

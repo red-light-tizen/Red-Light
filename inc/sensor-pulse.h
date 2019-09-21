@@ -10,7 +10,7 @@
 
 #include "sensor.h"
 
-#define DATA_GETTING_CYCLE 0.1
+#define DATA_GETTING_CYCLE 0.01
 
 #define MAX30100_I2C_ADDRESS                    0x57
 #define MAX30100_REG_INTERRUPT_STATUS           0x00
