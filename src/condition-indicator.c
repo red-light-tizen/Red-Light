@@ -30,5 +30,5 @@ void checkCondition(){
 int evaluateStatus(body_data data){
 	//TODO : Calculate condition.
 
-	return rand() % 3;
+	return 3;
 }

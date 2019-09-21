@@ -19,7 +19,7 @@ bt_error_e init_bluetooth() {
 		return ret;
 	}
 
-	bt_adapter_set_name("Red Light");
+	bt_adapter_set_name("Red Light12");
 
 	char *local_name;
 	bt_adapter_get_name(&local_name);

@@ -26,33 +26,33 @@ body_data get_sensor_data(){
 
 int get_pulse() {
 	int pulse = rand() % 100 + 50;
-	_I("Pulse: %d", pulse);
+//	_I("Pulse: %d", pulse);
 	return pulse;
 }
 
 double get_temperature() {
 	double temperature = (rand() % 30 + 350) * 10;
-	_I("Temperature: %lf", temperature);
+//	_I("Temperature: %lf", temperature);
 	return temperature;
 }
 
 double get_spo2() {
 	double spo2 = (rand() % 10 + 90);
-	_I("SPO2: %lf", spo2);
+//	_I("SPO2: %lf", spo2);
 	return spo2;
 }
 
 double get_activity() {
 	double activity = 23.0;
-	_I("Activity: %lf", activity);
+//	_I("Activity: %lf", activity);
 	return activity;
 }
 
 location_data get_location() {
 	double latitude = 36.23422;
-	_I("Latitude: %lf", latitude);
+//	_I("Latitude: %lf", latitude);
 	double longitude = -128.35869;
-	_I("Longitude: %lf", longitude);
+//	_I("Longitude: %lf", longitude);
 
 	location_data location;
 	location.latitude = latitude;

@@ -16,6 +16,7 @@
 #define STATUS_NORMAL 0
 #define STATUS_CAUTION 1
 #define STATUS_DANGER 2
+#define STATUS_USERACTION 3
 
 typedef struct condition_datatype {
 	int status;
