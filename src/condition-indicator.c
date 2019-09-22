@@ -9,21 +9,23 @@
 
 
 void checkCondition(){
-	 body_data bodydata = get_sensor_data();
+	 body_data bodydata = get_sensor_data_average();
 	 int status = evaluateStatus(bodydata);
 	 location_data location = get_location();
 
 	 condition_data condition;
 	 condition.status = status;
 	 condition.activity = bodydata.activity;
-	 condition.pulse = bodydata.pulse;
+	 condition.pulse = bodydata.heartbeat;
 	 condition.temprature = bodydata.temprature;
 	 condition.spo2 = bodydata.spo2;
+
 	 condition.latitude = location.latitude;
 	 condition.longitude = location.longitude;
 
+	 _I("%f, %f", condition.latitude, condition.longitude);
+
 	 registerEvent(condition_data, condition, create_data_packet);
-//	 registerEvent(void,*NULL,checkCondition);
 }
 
 

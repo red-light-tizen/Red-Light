@@ -22,7 +22,7 @@ typedef struct condition_datatype {
 	int status;
 
 	int pulse;
-	int temprature;
+	double temprature;
 	double spo2;
 	double activity;
 

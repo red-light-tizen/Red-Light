@@ -34,6 +34,7 @@ bt_error_e send_bluetooth_data(void* data) {
 
 	//ret is length of sent data
 
+	_I("packet Sended");
 	bt_data btdata = VPto(bt_data) data;
 
 	ret = bt_socket_send_data(client_socket_fd, btdata.message, btdata.length);
@@ -71,7 +72,7 @@ void create_data_packet(void *data) {
 
 	int status = condition.status;
 	int pulse = condition.pulse;
-	int temperature = condition.temprature;
+	int temperature = condition.temprature * 100;
 	int spo2 = condition.spo2 * 100;
 	int activity = condition.activity;
 	double latitude = condition.latitude;

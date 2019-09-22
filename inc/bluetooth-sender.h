@@ -13,9 +13,8 @@
 #include "condition-indicator.h"
 #include "bluetooth-common.h"
 
-
 #define DATA_SENDING_CYCLE 0.05
-#define DATA_SENDING_CYCLE_HZ 1/6.0
+#define DATA_SENDING_CYCLE_HZ 1/10.0
 #define DATA_SIZE 62
 
 typedef struct bt_datatype{
