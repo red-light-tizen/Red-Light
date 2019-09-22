@@ -11,6 +11,7 @@
 
 #include <dlog.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "as-log.h"
 
 #ifdef  LOG_TAG

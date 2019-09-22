@@ -9,8 +9,7 @@
 #define SENSOR_PULSE_H_
 
 #include "sensor.h"
-
-#define DATA_GETTING_CYCLE 0.1
+#include "input-getter.h"
 
 #define MAX30100_I2C_ADDRESS                    0x57
 #define MAX30100_REG_INTERRUPT_STATUS           0x00
@@ -71,13 +70,16 @@
 #define MAX30100_REG_PART_ID                    0xff
 #define MAX30100_FIFO_DEPTH                     0x10
 
+typedef struct pulse_datatype{
+
+	int heartbeat;
+	double spo2;
+}pulse_data;
+
 peripheral_error_e open_sensor_pulse();
 void close_sensor_pulse();
-static void init_sensor_pulse();
-peripheral_error_e read_sensor_pulse(uint16_t *, uint16_t *);
-bool set_sensor_pulse_getting();
-void unset_sensor_pulse_getting();
-static Eina_Bool sensor_get_timed_cb(void *);
-static Eina_Bool sensor_temp_get_timed_cb(void *);
+void init_sensor_pulse();
+pulse_data read_sensor_pulse();
+double read_sensor_temperature();
 
 #endif /* SENSOR_PULSE_H_ */

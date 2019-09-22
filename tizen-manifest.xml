@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="5.0" package="org.example.red-light" version="1.0.0">
     <profile name="iot-headless"/>
-    <service-application appid="org.example.red-light" exec="red-light" multiple="false" nodisplay="true" taskmanage="false" type="capp">
+    <service-application appid="org.example.red-light" exec="red-light" multiple="false" nodisplay="true" on-boot="true" taskmanage="false" type="capp">
         <label>red-light</label>
         <icon>red-light.png</icon>
     </service-application>

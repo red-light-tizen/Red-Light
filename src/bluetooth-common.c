@@ -19,7 +19,7 @@ bt_error_e init_bluetooth() {
 		return ret;
 	}
 
-	bt_adapter_set_name("Red Light");
+	bt_adapter_set_name("Red Light11");
 
 	char *local_name;
 	bt_adapter_get_name(&local_name);
@@ -285,6 +285,8 @@ static void socket_connection_state_changed(int result, bt_socket_connection_sta
 
             set_bluetooth_data_receiving();
             set_bluetooth_data_sending();
+
+
         } else {
             dlog_print(DLOG_INFO, LOG_TAG, "Callback: No connection data");
         }
