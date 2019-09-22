@@ -2,30 +2,13 @@
 #include <service_app.h>
 #include "red-light.h"
 
-//-------for test--------
-void testFunc(void* data) {
-	_I("test func printed %lf ", *(double* )data);
-}
-
-void testFunc2(void* data) {
-	_I("test func2 printed %lf ", 1000- *(double* )data);
-}
-
-void testfuncAdder() {
-	static double data = 0.0;
-	data += 10.0;
-
-	registerEvent(double,data,testFunc,testFunc2);
-
-}
-
-//-------for test--------
-
 bool service_app_create(void *data) {
 	// Todo: add your code here.
-	init_bluetooth();
-
 	startEventDelivery();
+	open_sensor_pulse();
+	open_sensor_gps();
+	start_data_update();
+	init_bluetooth();
 	_I("Created");
 	return true;
 }
@@ -33,20 +16,16 @@ bool service_app_create(void *data) {
 void service_app_terminate(void *data) {
 	// Todo: add your code here.
 	deinit_bluetooth();
-
+	finish_data_update();
+	close_sensor_gps();
+	close_sensor_pulse();
 	finishEventDelivery();
-
 	_I("terminated");
 	return;
 }
 
 void service_app_control(app_control_h app_control, void *data) {
 	// Todo: add your code here.
-	int i;
-	for(i = 0; i<100;++i)
-		registerEvent(void,*NULL,testfuncAdder);
-
-//	finishEventDelivery();
 	return;
 }
 

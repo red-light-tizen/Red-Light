@@ -63,6 +63,7 @@ int _register_Event(size_t datalen, void* data, int funcCount, ...) {
 			return i;
 		}
 	}
+	_I("Event bus is full!");
 	return -1;
 }
 

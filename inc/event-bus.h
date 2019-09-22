@@ -39,9 +39,10 @@ typedef void(*fp_rvpv)(void*);
  *
  * @note : If you don't want pass data, set data to "*NULL".
  *
- *
  * @usage : registerEvent(double, data, functions...);
  */
 #define registerEvent(dataType,data,...) _register_Event(sizeof(dataType), &(data), NUMARGS(__VA_ARGS__), __VA_ARGS__)
+
+#define VPto(dataType) *(dataType*)
 
 #endif /* EVENT_BUS_H_ */
